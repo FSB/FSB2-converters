@@ -11,7 +11,7 @@ interface FSB2_Polls
 	 * 	'sql' : requête spécifique
 	 * @return array
 	 */
-	protected function convert_polls();
+	function convert_polls();
 }
 
 # EOF

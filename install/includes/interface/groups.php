@@ -10,7 +10,7 @@ interface FSB2_Groups
 	 *  clef 'sql' : requêtes éventuel spécifique
 	 * @return array
 	 */
-	protected function convert_groups();
+	function convert_groups();
 }
 
 # EOF

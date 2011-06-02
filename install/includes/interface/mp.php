@@ -12,13 +12,13 @@ interface FSB2_Mp
 	 * @param int $state état lors du rafraichissement automatique
 	 * @return array
 	 */
-	protected function convert_mp($offset, $step, $state);
+	function convert_mp($offset, $step, $state);
 
 	/**
 	 * Retourne le nombre de MP a convertir
 	 * @return int
 	 */
-	protected function count_convert_mp();
+	function count_convert_mp();
 }
 
 # EOF

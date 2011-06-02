@@ -38,10 +38,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 	// Les mods installes sur FSB1
 	private $fsb1_mods = array();
 
-	/**
-	 * @overwrite
-	 */
-	protected function forum_information()
+	public function forum_information()
 	{
 		// Recherche des MOS FSB1 installes
 		$sql = 'SHOW TABLES LIKE \'' . $this->config('sql_prefix') . '%\'';
@@ -72,10 +69,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		}
 	}
 
-	/**
-	 * Retourne la liste des conversions implementees
-	 */
-	protected function _get_implement()
+	public function _get_implement()
 	{
 		$implement = array(
 			'config',
@@ -111,7 +105,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($implement);
 	}
 
-	protected function convert_config()
+	public function convert_config()
 	{
 		$return = array();
 
@@ -151,14 +145,14 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	protected function count_convert_users()
+	public function count_convert_users()
 	{
 		$sql = 'SELECT COUNT(*) AS total
 				FROM ' . $this->config('sql_prefix') . 'membres';
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	protected function convert_users($offset, $step, $state)
+	public function convert_users($offset, $step, $state)
 	{
 		$return = array();
 		$return['data'] = array();
@@ -221,10 +215,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	/**
-	 * Retourne les informations sur les groupes du forum
-	 */
-	protected function convert_groups()
+	public function convert_groups()
 	{
 		$return = array('groups' => array(), 'groups_users' => array());
 
@@ -275,7 +266,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	protected function convert_forums()
+	public function convert_forums()
 	{
 		// Chargement des forums
 		$forums = $this->fsb1_load_cache('forum');
@@ -398,7 +389,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($tree);
 	}
 
-	protected function convert_auths()
+	public function convert_auths()
 	{
 		$return = array('data' => array(), 'sql' => array());
 
@@ -539,14 +530,14 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	protected function count_convert_topics()
+	public function count_convert_topics()
 	{
 		$sql = 'SELECT COUNT(*) AS total
 				FROM ' . $this->config('sql_prefix') . 'sujets';
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	protected function convert_topics($offset, $step, $state)
+	public function convert_topics($offset, $step, $state)
 	{
 		$return = array();
 		$return['data'] = array();
@@ -586,14 +577,14 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	protected function count_convert_posts()
+	public function count_convert_posts()
 	{
 		$sql = 'SELECT COUNT(*) AS total
 				FROM ' . $this->config('sql_prefix') . 'messages';
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	protected function convert_posts($offset, $step, $state)
+	public function convert_posts($offset, $step, $state)
 	{
 		$return = array();
 		$return['data'] = array();
@@ -639,14 +630,14 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	protected function count_convert_mp()
+	public function count_convert_mp()
 	{
 		$sql = 'SELECT COUNT(*) AS total
 				FROM ' . $this->config('sql_prefix') . 'mps';
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	protected function convert_mp($offset, $step, $state)
+	public function convert_mp($offset, $step, $state)
 	{
 		$return = array();
 		$return['data'] = array();
@@ -678,7 +669,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	protected function convert_polls()
+	public function convert_polls()
 	{
 		$return = array('data' => array(), 'sql' => array());
 
@@ -739,7 +730,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	protected function convert_bans()
+	public function convert_bans()
 	{
 		$return = array('data' => array(), 'sql' => array());
 
@@ -776,10 +767,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	/**
-	 * @overwrite
-	 */
-	protected function convert_ranks()
+	public function convert_ranks()
 	{
 		$return = array('data' => array(), 'sql' => array());
 
@@ -809,7 +797,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	protected function convert_copy()
+	public function convert_copy()
 	{
 		$return = array();
 

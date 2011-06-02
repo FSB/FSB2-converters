@@ -12,7 +12,7 @@ interface FSB2_Ranks
 	 * 		'rank_quota'
 	 * @return array
 	 */
-	protected function convert_ranks();
+	function convert_ranks();
 }
 
 # EOF

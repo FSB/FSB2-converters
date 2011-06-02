@@ -6,7 +6,7 @@ interface FSB2_Posts
 	 * Retourne le nombre de messages que l'on va convertir
 	 * @return int
 	 */
-	protected function count_convert_posts();
+	function count_convert_posts();
 
 	/**
 	 * Retourne un tableau contenant a chaque ligne les informations sur un message
@@ -18,7 +18,7 @@ interface FSB2_Posts
 	 * @param int $state état lors du rafraichissement automatique
 	 * @return array
 	 */
-	protected function convert_posts($offset, $step, $state);
+	function convert_posts($offset, $step, $state);
 }
 
 # EOF

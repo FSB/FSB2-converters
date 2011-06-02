@@ -9,7 +9,7 @@ interface FSB2_Copy
 	 * 	clef 'ranks' : contient l'ensemble des  chemins vers les rangs des membres
 	 * @return array
 	 */
-	protected function convert_copy();
+	function convert_copy();
 }
 
 # EOF

@@ -6,12 +6,7 @@ interface FSB2_Users
 	 * Retourne le nombre de membres qu'on va convertir
 	 * @return int
 	 */
-	protected function count_convert_users()
-	{
-		$sql = 'SELECT COUNT(*) AS total
-				FROM ' . $this->config('sql_prefix') . 'membres';
-		return (Fsb::$db->get($sql, 'total'));
-	}
+	function count_convert_users();
 
 	/**
 	 * Retourne un tableau contenant a chaque ligne les informations sur un membre
@@ -23,7 +18,7 @@ interface FSB2_Users
 	 * @param int $state état lors du rafraichissement automatique
 	 * @return array
 	 */
-	protected function convert_users($offset, $step, $state);
+	function convert_users($offset, $step, $state);
 }
 
 # EOF

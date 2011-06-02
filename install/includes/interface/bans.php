@@ -14,7 +14,7 @@ interface FSB2_Bans
 	 *		'ban_cookie'
 	 * @return array
 	 */
-	protected function convert_bans();
+	function convert_bans();
 }
 
 # EOF

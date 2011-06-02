@@ -7,7 +7,7 @@ interface FSB2_Config
 	 * 
 	 * @return array
 	 */
-	protected function convert_config();
+	function convert_config();
 }
 
 # EOF

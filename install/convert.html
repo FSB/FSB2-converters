@@ -39,6 +39,15 @@
 					<div id="error">{ERRSTR}</div>
 				</fieldset>
 			<else>
+				<if content="$NEXT_PAGE OR $REFRESH_URL">
+					<fieldset>
+						<legend>{LG_INFORMATION}</legend>
+						<div id="desc" style="text-align: left">
+							{LG_CONVERT_OTW}<br /><br />
+						</div>
+					</fieldset>
+				</if>
+
 				<if content="$REFRESH_URL AND !$NEXT_PAGE">
 					<fieldset>
 						<legend>{LG_INFORMATION}</legend>

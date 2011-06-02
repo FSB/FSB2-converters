@@ -6,7 +6,7 @@ interface FSB2_Topics
 	 * Retourne le nombre de sujets qu'on va convertir
 	 * @return int
 	 */
-	protected function count_convert_topics();
+	function count_convert_topics();
 
 	/**
 	 * Retourne un tableau contenant a chaque ligne les informations sur un sujet
@@ -18,7 +18,7 @@ interface FSB2_Topics
 	 * @param int $state état lors du rafraichissement automatique
 	 * @return array
 	 */
-	protected function convert_topics($offset, $step, $state);
+	function convert_topics($offset, $step, $state);
 }
 
 # EOF

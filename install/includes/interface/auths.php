@@ -14,7 +14,7 @@ interface FSB2_Auths
 	 * clef 'sql' :
 	 * Requète sql spécifique, par exemple pour mettre à jour la couleurs des users
 	 */
-	protected function convert_auths();
+	function convert_auths();
 }
 
 # EOF

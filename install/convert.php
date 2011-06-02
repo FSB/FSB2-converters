@@ -187,7 +187,7 @@ class Convert
 	 * Apelée dans get_implement()
 	 * @return array
 	 */
-	protected function _get_implement()
+	public function _get_implement()
 	{
 		$implemented = class_implements($this);
 		$implemented_interfaces = array(
@@ -435,7 +435,9 @@ class Convert
 
 		if (!is_writable(self::EXPORT_FILENAME))
 		{
-			chmod(self::EXPORT_FILENAME, 'ugo+w');
+			$perms = fileperms(self::EXPORT_FILENAME);
+			$perms = $perms | 0x0222; // donne le droit d'écriture a tout le monde
+			@chmod(self::EXPORT_FILENAME, $perms);
 		}
 	}
 
@@ -482,7 +484,10 @@ class Convert
 			$query[] = 'UPDATE ' . SQL_PREFIX . 'config SET cfg_value = \'' . Fsb::$db->escape($value) . '\' WHERE cfg_name = \'' . Fsb::$db->escape($key) . '\'';
 		}
 
-		$this->_push_manual_queries($query, $data['sql']);
+		if (!empty($data['sql']))
+		{
+			$this->_push_manual_queries($query, $data['sql']);
+		}
 
 		$this->output($query);
 	}
@@ -621,13 +626,22 @@ class Convert
 
 		$groups = $this->convert_groups();
 
-		$this->_push_data_queries($queries, $groups['groups'], 'groups');
+		if (!empty($data['groups']))
+		{
+			$this->_push_data_queries($queries, $groups['groups'], 'groups');
+		}
 		unset($groups['groups']);
 
-		$this->_push_data_queries($queries, $groups['groups_users'], 'groups_users');
+		if (!empty($data['groups_users']))
+		{
+			$this->_push_data_queries($queries, $groups['groups_users'], 'groups_users');
+		}
 		unset($groups['groups_users']);
 
-		$this->_push_manual_queries($queries, $groups['sql']);
+		if (!empty($data['sql']))
+		{
+			$this->_push_manual_queries($queries, $groups['sql']);
+		}
 
 		$this->output($queries);
 	}
@@ -674,7 +688,10 @@ class Convert
 		}
 
 		// Requetes manuelles
-		$this->_push_manual_queries($queries, $auths_list['sql']);
+		if (!empty($data['sql']))
+		{
+			$this->_push_manual_queries($queries, $auths_list['sql']);
+		}
 
 		$this->output($queries);
 	}
@@ -927,8 +944,15 @@ class Convert
 	 */
 	private function _push_convert_queries(&$queries, $datas, $table)
 	{
-		$this->_push_data_queries(&$queries, $datas['data'], $table);
-		$this->_push_manual_queries(&$queries, $datas['sql']);
+		if (!empty($data['data']))
+		{
+			$this->_push_data_queries(&$queries, $datas['data'], $table);
+		}
+
+		if (!empty($data['sql']))
+		{
+			$this->_push_manual_queries(&$queries, $datas['sql']);
+		}
 	}
 
 	/**
