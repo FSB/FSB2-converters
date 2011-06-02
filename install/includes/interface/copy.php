@@ -1,8 +1,15 @@
 <?php
 
-interface FSB2_
+interface FSB2_Copy
 {
-	
+	/**
+	 * Retourne les dossiers pour la copie d'image
+	 * array :
+	 * 	clef 'avatars' : contient l'ensemble des chemins vers les avatars des membres
+	 * 	clef 'ranks' : contient l'ensemble des  chemins vers les rangs des membres
+	 * @return array
+	 */
+	protected function convert_copy();
 }
 
 # EOF

@@ -20,7 +20,7 @@
  *	- Login / pseudo
  *	- Rangs
  */
-class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_Bans, FSB2_Ranks
+class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_Users, FSB2_Groups, FSB2_Forums, FSB2_Auths, FSB2_Topics, FSB2_Posts, FSB2_Mp, FSB2_Polls, FSB2_Bans, FSB2_Ranks, FSB2_Copy
 {
 	// Nom du forum
 	public static $static_forum_type = 'FSB (Fire Soft Board) 1.0.X';
@@ -111,9 +111,6 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_B
 		return ($implement);
 	}
 
-	/**
-	 * Retourne la configuration du forum sous la forme array('key' => 'value')
-	 */
 	protected function convert_config()
 	{
 		$return = array();
@@ -132,7 +129,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_B
 				ORDER BY date_enregistrement DESC';
 		$last_user = Fsb::$db->request($sql);
 
-		$return = array(
+		$return['data'] = array(
 			'register_time' =>			$cfg['forum_creation'],
 			'forum_mail' =>				$cfg['forum_mail'],
 			'forum_name' =>				$cfg['nom_site'],
@@ -283,9 +280,6 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_B
 		return ($return);
 	}
 
-	/**
-	 * Fonction devant retourner un arbre de forums (objet Convert_tree_forums)
-	 */
 	protected function convert_forums()
 	{
 		// Chargement des forums
@@ -409,9 +403,6 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_B
 		return ($tree);
 	}
 
-	/**
-	 * @overwrite
-	 */
 	protected function convert_auths()
 	{
 		$return = array('data' => array(), 'sql' => array());
@@ -605,9 +596,6 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_B
 		return ($return);
 	}
 
-	/**
-	 * Retourne le nombre de messages qu'on va convertir
-	 */
 	protected function count_convert_posts()
 	{
 		$sql = 'SELECT COUNT(*) AS total
@@ -663,9 +651,6 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_B
 		return ($return);
 	}
 
-	/**
-	 * Retourne le nombre de messages prives qu'on va convertir
-	 */
 	protected function count_convert_mp()
 	{
 		$sql = 'SELECT COUNT(*) AS total
@@ -673,12 +658,10 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_B
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	/**
-	 * Retourne un tableau contenant a chaque ligne les informations sur un message prive
-	 */
 	protected function convert_mp($offset, $step, $state)
 	{
 		$return = array();
+		$return['data'] = array();
 
 		$sql = 'SELECT *
 				FROM ' . $this->config('sql_prefix') . 'mps
@@ -700,18 +683,13 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_B
 				'is_auto_answer' =>	0,
 			);
 
-			$return[] = $data;
+			$return['data'][] = $data;
 		}
 		Fsb::$db->free($result);
 
 		return ($return);
 	}
 
-	/**
-	 * Retourne un tableau contenant les sondages, avec un sondage par ligne. Chaque ligne de sondage
-	 * doit contenir un sous tableau "options" avec le tableau d'options, ainsi qu'un tableau "voters"
-	 * contenant les ID des membres qui ont vote.
-	 */
 	protected function convert_polls()
 	{
 		$return = array('data' => array(), 'sql' => array());
@@ -773,9 +751,6 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_B
 		return ($return);
 	}
 
-	/**
-	 * @overwrite
-	 */
 	protected function convert_bans()
 	{
 		$return = array('data' => array(), 'sql' => array());
@@ -846,9 +821,6 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_B
 		return ($return);
 	}
 
-	/**
-	 * Retourne les dossiers pour la copie d'image
-	 */
 	protected function convert_copy()
 	{
 		$return = array();

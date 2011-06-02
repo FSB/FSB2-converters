@@ -16,8 +16,8 @@ Les méthodes a implémenté varie suivants ce qui peut-être converti ou non.
 Suivant ce que renvoi la méthode _get_implement(), les interface a implémenté change.
 Normalement, par ligne renvoyé par get_implements, il y a une interface spécific a implémenté.
 
-Chaque methode convert renvoi un array ayant deux clef :
-'data' : donnée liée a fsb même
+La pluspart des methodes convert_X renvoi un array ayant deux clef :
+'data' : donnée liée a fsb même, souvent des tableaux associatif qui sont simplement les clef et valeurs de la db 
 'sql' : requête éventuelle a effectuer sur fsb suite à la migration, se doit d'être éviter au maximum
 
 Ajout d'une étape supplémentaire dans le convertisseur

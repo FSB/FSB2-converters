@@ -1,6 +1,6 @@
 <?php
 
-interface FSB2_
+interface FSB2_Topics
 {
 	
 }

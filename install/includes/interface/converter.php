@@ -10,6 +10,7 @@ interface FSB2_Converter
 	/**
 	 * Retourne la liste des conversions implementées.
 	 * Apelée dans get_implement()
+	 * @see Converter#_get_implement()
 	 * @return array
 	 */
 	protected function _get_implement();

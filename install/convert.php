@@ -183,6 +183,42 @@ class Convert
 	}
 
 	/**
+	 * Retourne la liste des conversions implementées.
+	 * Apelée dans get_implement()
+	 * @return array
+	 */
+	protected function _get_implement()
+	{
+		$implemented = class_implements($this);
+		$implemented_interfaces = array(
+			'FSB2_Config' 	=> 'config',
+			'FSB2_Users'	=> 'users',
+			'FSB2_Groups'	=> 'groups',
+			'FSB2_Forums'	=> 'forums',
+			'FSB2_Auths'	=> 'auths',
+			'FSB2_Topics'	=> 'topics',
+			'FSB2_Posts'	=> 'posts',
+			'FSB2_Mp'		=> 'mp',
+			'FSB2_Polls'	=> 'polls',
+			'FSB2_Bans'		=> 'bans',
+			'FSB2_Ranks'	=> 'ranks',
+			'FSB2_Copy'		=> 'copy'
+		);
+
+		$implements = array();
+
+		foreach($implemented as $interface)
+		{
+			if (!empty($implemented_interfaces[ $interface ]))
+			{
+				$implements[] = $implemented_interfaces[ $interface ];
+			} 
+		}
+
+		return $implements;
+	}
+
+	/**
 	 * Liste des conversions que le script implemente
 	 */
 	private function get_implement()
@@ -199,7 +235,7 @@ class Convert
 			'polls',
 			'bans',
 			'ranks',
-			'copy',
+			'copy'
 		);
 
 		$this->implement = array_intersect($this->implement, $this->_get_implement());
@@ -435,17 +471,18 @@ class Convert
 
 	/**
 	 * Configuration du forum
-	 *
 	 */
 	private function page_config()
 	{
 		$data = $this->convert_config();
 
 		$query = array();
-		foreach ($data AS $key => $value)
+		foreach ($data['data'] AS $key => $value)
 		{
 			$query[] = 'UPDATE ' . SQL_PREFIX . 'config SET cfg_value = \'' . Fsb::$db->escape($value) . '\' WHERE cfg_name = \'' . Fsb::$db->escape($key) . '\'';
 		}
+
+		$this->_push_manual_queries($query, $data['sql']);
 
 		$this->output($query);
 	}
@@ -582,18 +619,14 @@ class Convert
 		$queries = array();
 
 		$groups = $this->convert_groups();
-		foreach ($groups['groups'] AS $data)
-		{
-			$data = array_map(array(Fsb::$db, 'escape'), $data);
-			$queries[] = 'INSERT INTO ' . SQL_PREFIX . 'groups (' . implode(', ', array_keys($data)) . ') VALUES (\'' . implode('\', \'', $data) . '\')';
-		}
+
+		$this->_push_data_queries($queries, $groups['groups'], 'groups');
 		unset($groups['groups']);
 
-		foreach ($groups['groups_users'] AS $data)
-		{
-			$data = array_map(array(Fsb::$db, 'escape'), $data);
-			$queries[] = 'INSERT INTO ' . SQL_PREFIX . 'groups_users (' . implode(', ', array_keys($data)) . ') VALUES (\'' . implode('\', \'', $data) . '\')';
-		}
+		$this->_push_data_queries($queries, $groups['groups_users'], 'groups_users');
+		unset($groups['groups_users']);
+
+		$this->_push_manual_queries($queries, $groups['sql']);
 
 		$this->output($queries);
 	}
@@ -640,10 +673,7 @@ class Convert
 		}
 
 		// Requetes manuelles
-		foreach ($auths_list['sql'] AS $query)
-		{
-			$queries[] = $query;
-		}
+		$this->_push_manual_queries($queries, $auths_list['sql']);
 
 		$this->output($queries);
 	}
@@ -765,11 +795,8 @@ class Convert
 			$query[] = 'TRUNCATE ' . SQL_PREFIX . 'mp';
 		}
 
-		foreach ($this->convert_mp($this->offset, $step, $state) AS $data)
-		{
-			$data = array_map(array(Fsb::$db, 'escape'), $data);
-			$query[] = 'INSERT INTO ' . SQL_PREFIX . 'mp (' . implode(', ', array_keys($data)) . ') VALUES (\'' . implode('\', \'', $data) . '\')';
-		}
+		$data = $this->convert_mp($this->offset, $step, $state);
+		$this->_push_convert_queries($query, $data, 'mp');
 
 		$this->output($query);
 
@@ -825,10 +852,7 @@ class Convert
 		}
 
 		// Requetes manuelles
-		foreach ($polls['sql'] AS $query)
-		{
-			$queries[] = $query;
-		}
+		$this->_push_manual_queries($queries, $polls['sql']);
 
 		$this->output($queries);
 	}
@@ -844,24 +868,13 @@ class Convert
 
 		$bans = $this->convert_bans();
 
-		foreach ($bans['data'] AS $ban)
-		{
-			$ban = array_map(array(Fsb::$db, 'escape'), $ban);
-			$queries[] = 'INSERT INTO ' . SQL_PREFIX . 'ban (' . implode(', ', array_keys($ban)) . ') VALUES (\'' . implode('\', \'', $ban) . '\')';
-		}
-
-		// Requetes manuelles
-		foreach ($bans['sql'] AS $query)
-		{
-			$queries[] = $query;
-		}
+		$this->_push_convert_queries($queries, $bans, 'ban');
 
 		$this->output($queries);
 	}
 
 	/**
 	 * Liste des rangs
-	 *
 	 */
 	private function page_ranks()
 	{
@@ -870,17 +883,7 @@ class Convert
 
 		$ranks = $this->convert_ranks();
 
-		foreach ($ranks['data'] AS $rank)
-		{
-			$rank = array_map(array(Fsb::$db, 'escape'), $rank);
-			$queries[] = 'INSERT INTO ' . SQL_PREFIX . 'ranks (' . implode(', ', array_keys($rank)) . ') VALUES (\'' . implode('\', \'', $rank) . '\')';
-		}
-
-		// Requetes manuelles
-		foreach ($ranks['sql'] AS $query)
-		{
-			$queries[] = $query;
-		}
+		$this->_push_convert_queries($queries, $ranks, 'ranks');
 
 		$this->output($queries);
 	}
@@ -918,6 +921,47 @@ class Convert
 					}
 				}
 			}
+		}
+	}
+
+	/**
+	 * Met les queries specifique et automatique dans le tableau des requêtes
+	 * @param array $queries ['data', 'sql']
+	 * @param array $datas tableau de requetes
+	 * @param string $table nom de la table sql
+	 */
+	private function _push_convert_queries(&$queries, $datas, $table)
+	{
+		$this->_push_data_queries(&$queries, $datas['data'], $table);
+		$this->_push_manual_queries(&$queries, $datas['sql']);
+	}
+
+	/**
+	 * Met les queries automatique a exécuter dans le tableau des requêtes
+	 * @param array $queries
+	 * @param array $datas
+	 * @param string $table nom de la table sql
+	 */
+	private function _push_data_queries(&$queries, $datas, $table)
+	{
+		foreach ($datas AS $data)
+		{
+			$data = array_map(array(Fsb::$db, 'escape'), $data);
+			$queries[] = 'INSERT INTO ' . SQL_PREFIX . $table . ' (' . implode(', ', array_keys($data)) . ') VALUES (\'' . implode('\', \'', $data) . '\')';
+		}
+	}
+
+	/**
+	 * Met les queries specifique a exécuter dans le tableau des requêtes
+	 * @param array $queries
+	 * @param array $data tableau de requetes
+	 */
+	private function _push_manual_queries(&$queries, $data)
+	{
+		// Requetes manuelles
+		foreach ($data AS $query)
+		{
+			$queries[] = $query;
 		}
 	}
 }
