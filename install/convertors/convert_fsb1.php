@@ -151,9 +151,6 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	/**
-	 * Retourne le nombre de membres qu'on va convertir
-	 */
 	protected function count_convert_users()
 	{
 		$sql = 'SELECT COUNT(*) AS total
@@ -161,12 +158,10 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	/**
-	 * Retourne un tableau contenant a chaque ligne les informations sur un membre
-	 */
 	protected function convert_users($offset, $step, $state)
 	{
 		$return = array();
+		$return['data'] = array();
 		$fondator_exists = false;
 
 		$sql = 'SELECT m.*, COUNT(s.sujet_id) AS total_sujet
@@ -219,7 +214,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 				'u_use_salt' =>		0,
 			);
 
-			$return[] = $user;
+			$return['data'][] = $user;
 		}
 		Fsb::$db->free($result);
 
@@ -544,9 +539,6 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return ($return);
 	}
 
-	/**
-	 * Retourne le nombre de sujets qu'on va convertir
-	 */
 	protected function count_convert_topics()
 	{
 		$sql = 'SELECT COUNT(*) AS total
@@ -554,12 +546,10 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	/**
-	 * Retourne un tableau contenant a chaque ligne les informations sur un sujet
-	 */
 	protected function convert_topics($offset, $step, $state)
 	{
 		$return = array();
+		$return['data'] = array();
 
 		$sql = 'SELECT s.*, m.membre_id AS u_id, m.pseudo_posteur AS p_nickname, m.message_temps
 				FROM ' . $this->config('sql_prefix') . 'sujets s
@@ -589,7 +579,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 				't_map_first_post' =>	true,
 			);
 
-			$return[] = $data;
+			$return['data'][] = $data;
 		}
 		Fsb::$db->free($result);
 
@@ -603,12 +593,10 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	/**
-	 * Retourne un tableau contenant a chaque ligne les informations sur un message
-	 */
 	protected function convert_posts($offset, $step, $state)
 	{
 		$return = array();
+		$return['data'] = array();
 
 		$idx = array();
 		$sql = 'SELECT message_id
@@ -643,7 +631,7 @@ class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_
 					'p_approve' =>	IS_APPROVED,
 				);
 
-				$return[] = $data;
+				$return['data'][] = $data;
 			}
 			Fsb::$db->free($result);
 		}

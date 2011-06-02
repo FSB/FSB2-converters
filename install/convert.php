@@ -535,7 +535,8 @@ class Convert
 		);
 
 		// Creation des requetes
-		foreach ($this->convert_users($this->offset, $step, $state) AS $data)
+		$users = $this->convert_users($this->offset, $step, $state);
+		foreach ($users AS $data)
 		{
 			// ID unique du groupe du membre
 			$group_id = $data['u_id'] + 10;
@@ -707,11 +708,8 @@ class Convert
 			$query[] = 'TRUNCATE ' . SQL_PREFIX . 'topics';
 		}
 
-		foreach ($this->convert_topics($this->offset, $step, $state) AS $data)
-		{
-			$data = array_map(array(Fsb::$db, 'escape'), $data);
-			$query[] = 'INSERT INTO ' . SQL_PREFIX . 'topics (' . implode(', ', array_keys($data)) . ') VALUES (\'' . implode('\', \'', $data) . '\')';
-		}
+		$topics = $this->convert_topics($this->offset, $step, $state);
+		$this->_push_convert_queries($query, $topics, 'topics');
 
 		$this->output($query);
 
@@ -751,11 +749,8 @@ class Convert
 			$query[] = 'TRUNCATE ' . SQL_PREFIX . 'posts';
 		}
 
-		foreach ($this->convert_posts($this->offset, $step, $state) AS $data)
-		{
-			$data = array_map(array(Fsb::$db, 'escape'), $data);
-			$query[] = 'INSERT INTO ' . SQL_PREFIX . 'posts (' . implode(', ', array_keys($data)) . ') VALUES (\'' . implode('\', \'', $data) . '\')';
-		}
+		$posts = $this->convert_posts($this->offset, $step, $state);
+		$this->_push_convert_queries($query, $posts, 'posts');
 
 		$this->output($query);
 
