@@ -1,27 +1,26 @@
 <?php
 /*
-** +---------------------------------------------------+
-** | Name :		~/install/convertors/convert_fsb1.php
-** | Begin :	28/12/2007
-** | Last :		07/01/2008
-** | User :		Genova
-** | Project :	Fire-Soft-Board 2 - Copyright FSB group
-** | License :	GPL v2.0
-** +---------------------------------------------------+
-*/
+ ** +---------------------------------------------------+
+ ** | Name :		~/install/convertors/convert_fsb1.php
+ ** | Begin :	28/12/2007
+ ** | Last :		07/01/2008
+ ** | User :		Genova
+ ** | Project :	Fire-Soft-Board 2 - Copyright FSB group
+ ** | License :	GPL v2.0
+ ** +---------------------------------------------------+
+ */
 
-/*
-** Convertisseur FSB1 -> FSB2
-**
-** Mods supportes :
-**	- Messagerie privee
-**	- Groupes et autorisations des groupes
-**	- Sondages
-**	- Login / pseudo
-**	- Rangs
-*/
-
-class Convert_fsb1 extends Convert
+/**
+ * Convertisseur FSB1 -> FSB2
+ *
+ * Mods supportes :
+ *	- Messagerie privee
+ *	- Groupes et autorisations des groupes
+ *	- Sondages
+ *	- Login / pseudo
+ *	- Rangs
+ */
+class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Auths, FSB2_Bans, FSB2_Ranks
 {
 	// Nom du forum
 	public static $static_forum_type = 'FSB (Fire Soft Board) 1.0.X';
@@ -39,9 +38,9 @@ class Convert_fsb1 extends Convert
 	// Les mods installes sur FSB1
 	private $fsb1_mods = array();
 
-	/*
-	** Methode permettant de recuperer sur chaque page des informations sur le forum
-	*/
+	/**
+	 * @overwrite
+	 */
 	protected function forum_information()
 	{
 		// Recherche des MOS FSB1 installes
@@ -54,15 +53,15 @@ class Convert_fsb1 extends Convert
 			{
 				case 'groupes' :
 					$this->fsb1_mods['groups'] = true;
-				break;
+					break;
 
 				case 'mps' :
 					$this->fsb1_mods['mps'] = true;
-				break;
+					break;
 
 				case 'sondage' :
 					$this->fsb1_mods['polls'] = true;
-				break;
+					break;
 			}
 		}
 		Fsb::$db->free($result);
@@ -73,9 +72,9 @@ class Convert_fsb1 extends Convert
 		}
 	}
 
-	/*
-	** Retourne la liste des conversions implementees
-	*/
+	/**
+	 * Retourne la liste des conversions implementees
+	 */
 	protected function _get_implement()
 	{
 		$implement = array(
@@ -112,9 +111,9 @@ class Convert_fsb1 extends Convert
 		return ($implement);
 	}
 
-	/*
-	** Retourne la configuration du forum sous la forme array('key' => 'value')
-	*/
+	/**
+	 * Retourne la configuration du forum sous la forme array('key' => 'value')
+	 */
 	protected function convert_config()
 	{
 		$return = array();
@@ -155,9 +154,9 @@ class Convert_fsb1 extends Convert
 		return ($return);
 	}
 
-	/*
-	** Retourne le nombre de membres qu'on va convertir
-	*/
+	/**
+	 * Retourne le nombre de membres qu'on va convertir
+	 */
 	protected function count_convert_users()
 	{
 		$sql = 'SELECT COUNT(*) AS total
@@ -165,9 +164,9 @@ class Convert_fsb1 extends Convert
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	/*
-	** Retourne un tableau contenant a chaque ligne les informations sur un membre
-	*/
+	/**
+	 * Retourne un tableau contenant a chaque ligne les informations sur un membre
+	 */
 	protected function convert_users($offset, $step, $state)
 	{
 		$return = array();
@@ -230,9 +229,9 @@ class Convert_fsb1 extends Convert
 		return ($return);
 	}
 
-	/*
-	** Retourne les informations sur les groupes du forum
-	*/
+	/**
+	 * Retourne les informations sur les groupes du forum
+	 */
 	protected function convert_groups()
 	{
 		$return = array('groups' => array(), 'groups_users' => array());
@@ -284,9 +283,9 @@ class Convert_fsb1 extends Convert
 		return ($return);
 	}
 
-	/*
-	** Fonction devant retourner un arbre de forums (objet Convert_tree_forums)
-	*/
+	/**
+	 * Fonction devant retourner un arbre de forums (objet Convert_tree_forums)
+	 */
 	protected function convert_forums()
 	{
 		// Chargement des forums
@@ -410,14 +409,9 @@ class Convert_fsb1 extends Convert
 		return ($tree);
 	}
 
-	/*
-	** Doit retourner un tableau multidimensionel contenant :
-	** - Au premier niveau en clef, l'ID d'un forum
-	** - Au second niveau en clef, l'ID d'un groupe
-	** - Au troisieme niveau, les clefs des droits avec true / false
-	** En clair, ce tableau permet de determiner les droits pour chaque groupe pour chaque forum.
-	** Une abscence de forum ou de groupe signifie aucun droit.
-	*/
+	/**
+	 * @overwrite
+	 */
 	protected function convert_auths()
 	{
 		$return = array('data' => array(), 'sql' => array());
@@ -559,9 +553,9 @@ class Convert_fsb1 extends Convert
 		return ($return);
 	}
 
-	/*
-	** Retourne le nombre de sujets qu'on va convertir
-	*/
+	/**
+	 * Retourne le nombre de sujets qu'on va convertir
+	 */
 	protected function count_convert_topics()
 	{
 		$sql = 'SELECT COUNT(*) AS total
@@ -569,9 +563,9 @@ class Convert_fsb1 extends Convert
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	/*
-	** Retourne un tableau contenant a chaque ligne les informations sur un sujet
-	*/
+	/**
+	 * Retourne un tableau contenant a chaque ligne les informations sur un sujet
+	 */
 	protected function convert_topics($offset, $step, $state)
 	{
 		$return = array();
@@ -611,9 +605,9 @@ class Convert_fsb1 extends Convert
 		return ($return);
 	}
 
-	/*
-	** Retourne le nombre de messages qu'on va convertir
-	*/
+	/**
+	 * Retourne le nombre de messages qu'on va convertir
+	 */
 	protected function count_convert_posts()
 	{
 		$sql = 'SELECT COUNT(*) AS total
@@ -621,9 +615,9 @@ class Convert_fsb1 extends Convert
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	/*
-	** Retourne un tableau contenant a chaque ligne les informations sur un message
-	*/
+	/**
+	 * Retourne un tableau contenant a chaque ligne les informations sur un message
+	 */
 	protected function convert_posts($offset, $step, $state)
 	{
 		$return = array();
@@ -639,7 +633,7 @@ class Convert_fsb1 extends Convert
 			$idx[] = $row['message_id'];
 		}
 		Fsb::$db->free($result);
-		
+
 		if ($idx)
 		{
 			$sql = 'SELECT *
@@ -660,7 +654,7 @@ class Convert_fsb1 extends Convert
 					'p_map' =>		'classic',
 					'p_approve' =>	IS_APPROVED,
 				);
-	
+
 				$return[] = $data;
 			}
 			Fsb::$db->free($result);
@@ -669,9 +663,9 @@ class Convert_fsb1 extends Convert
 		return ($return);
 	}
 
-	/*
-	** Retourne le nombre de messages prives qu'on va convertir
-	*/
+	/**
+	 * Retourne le nombre de messages prives qu'on va convertir
+	 */
 	protected function count_convert_mp()
 	{
 		$sql = 'SELECT COUNT(*) AS total
@@ -679,9 +673,9 @@ class Convert_fsb1 extends Convert
 		return (Fsb::$db->get($sql, 'total'));
 	}
 
-	/*
-	** Retourne un tableau contenant a chaque ligne les informations sur un message prive
-	*/
+	/**
+	 * Retourne un tableau contenant a chaque ligne les informations sur un message prive
+	 */
 	protected function convert_mp($offset, $step, $state)
 	{
 		$return = array();
@@ -713,11 +707,11 @@ class Convert_fsb1 extends Convert
 		return ($return);
 	}
 
-	/*
-	** Retourne un tableau contenant les sondages, avec un sondage par ligne. Chaque ligne de sondage
-	** doit contenir un sous tableau "options" avec le tableau d'options, ainsi qu'un tableau "voters"
-	** contenant les ID des membres qui ont vote.
-	*/
+	/**
+	 * Retourne un tableau contenant les sondages, avec un sondage par ligne. Chaque ligne de sondage
+	 * doit contenir un sous tableau "options" avec le tableau d'options, ainsi qu'un tableau "voters"
+	 * contenant les ID des membres qui ont vote.
+	 */
 	protected function convert_polls()
 	{
 		$return = array('data' => array(), 'sql' => array());
@@ -779,9 +773,9 @@ class Convert_fsb1 extends Convert
 		return ($return);
 	}
 
-	/*
-	** Retourne les informations sur le bannissement
-	*/
+	/**
+	 * @overwrite
+	 */
 	protected function convert_bans()
 	{
 		$return = array('data' => array(), 'sql' => array());
@@ -795,15 +789,15 @@ class Convert_fsb1 extends Convert
 			{
 				case 0 :
 					$type = 'login';
-				break;
+					break;
 
 				case 1 :
 					$type = 'mail';
-				break;
+					break;
 
 				case 2 :
 					$type = 'ip';
-				break;
+					break;
 			}
 
 			$return['data'][] = array(
@@ -819,9 +813,9 @@ class Convert_fsb1 extends Convert
 		return ($return);
 	}
 
-	/*
-	** Retourne les informations sur les rangs
-	*/
+	/**
+	 * @overwrite
+	 */
 	protected function convert_ranks()
 	{
 		$return = array('data' => array(), 'sql' => array());
@@ -852,32 +846,32 @@ class Convert_fsb1 extends Convert
 		return ($return);
 	}
 
-	/*
-	** Retourne les dossiers pour la copie d'image
-	*/
+	/**
+	 * Retourne les dossiers pour la copie d'image
+	 */
 	protected function convert_copy()
 	{
 		$return = array();
 
 		// Avatars
 		$return['avatars'] = array(
-			ROOT . $this->config('forum_path') . 'images/avatars/',
+		ROOT . $this->config('forum_path') . 'images/avatars/',
 		);
 
 		// Rangs
 		if (isset($this->fsb1_mods['ranks']))
 		{
 			$return['ranks'] = array(
-				ROOT . $this->config('forum_path') . 'images/rangs/',
+			ROOT . $this->config('forum_path') . 'images/rangs/',
 			);
 		}
 
 		return ($return);
 	}
 
-	/*
-	** Charge un fichier cache de FSB1
-	*/
+	/**
+	 * Charge un fichier cache de FSB1
+	 */
 	private function fsb1_load_cache($key)
 	{
 		if ($key == 'forum')
@@ -902,18 +896,18 @@ class Convert_fsb1 extends Convert
 		}
 	}
 
-	/*
-	** On ajoute 1 aux ID de FSB1 (car sous FSB1 les ID commencent a 0 pour l'invite, et donc l'admin a une ID de 1, la ou dans FSB2 l'administrateur
-	** a une ID de 2 par defaut).
-	*/
+	/**
+	 * On ajoute 1 aux ID de FSB1 (car sous FSB1 les ID commencent a 0 pour l'invite, et donc l'admin a une ID de 1, la ou dans FSB2 l'administrateur
+	 * a une ID de 2 par defaut).
+	 */
 	private function fsb1_user_id($user_id)
 	{
 		return ($user_id + 1);
 	}
 
-	/*
-	** Converti une autorisation FSB1 en autorisation FSB2
-	*/
+	/**
+	 * Converti une autorisation FSB1 en autorisation FSB2
+	 */
 	private function fsb1_get_auth($f, $level, $auth)
 	{
 		if (!isset($f[$auth]))
@@ -929,9 +923,9 @@ class Convert_fsb1 extends Convert
 		return (($f[$auth] > $level) ? 0 : 1);
 	}
 
-	/*
-	** Parse un message FSB1 vers FSB2
-	*/
+	/**
+	 * Parse un message FSB1 vers FSB2
+	 */
 	private function fsb1_parse_message($str)
 	{
 		$str = $this->fsb1_parse_fsbcode($str);
@@ -947,9 +941,9 @@ class Convert_fsb1 extends Convert
 		return ($str);
 	}
 
-	/*
-	** Parse les FSBcode FSB1 dans du texte
-	*/
+	/**
+	 * Parse les FSBcode FSB1 dans du texte
+	 */
 	private function fsb1_parse_fsbcode($str)
 	{
 		$str = preg_replace_callback('#\[taille=([0-9]+?)\](.*?)\[/taille\]#si', array($this, 'fsb1_fsbcode_size'), $str);
@@ -961,9 +955,9 @@ class Convert_fsb1 extends Convert
 		return ($str);
 	}
 
-	/*
-	** Parse correctement le FSBcode SIZE
-	*/
+	/**
+	 * Parse correctement le FSBcode SIZE
+	 */
 	public function fsb1_fsbcode_size($m)
 	{
 		$size = $m[1];
@@ -983,9 +977,9 @@ class Convert_fsb1 extends Convert
 		return ('[size=' . $size . ']' . $m[2] . '[/size]');
 	}
 
-	/*
-	** Retourne la tableau associatif array('ancienne_id_de_groupe' => 'nouvelle_id')
-	*/
+	/**
+	 * Retourne la tableau associatif array('ancienne_id_de_groupe' => 'nouvelle_id')
+	 */
 	private function fsb1_get_groups_id()
 	{
 		$return = array();

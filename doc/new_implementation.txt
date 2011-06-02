@@ -1,0 +1,34 @@
+Comment ajouter un nouveau convertisseur ?
+==========================================
+
+- Créer un fichier install/convertors/convert_[specific prefix].php
+- Créer une class implementant l'interface 'Fsb2_Converter' et étendants 'Convert'
+- Ajouter les champs suivants :
+	// Nom du forum
+	public static $static_forum_type = 'PHPBoost 3.0.X';
+	public $forum_type = 'PHPBoost 3.0.X';
+	public static function forum_type(){return (self::$static_forum_type);}
+
+	// UTF-8 active sur le forum ?
+	protected $use_utf8 = false;
+
+Les méthodes a implémenté varie suivants ce qui peut-être converti ou non.
+Suivant ce que renvoi la méthode _get_implement(), les interface a implémenté change.
+Normalement, par ligne renvoyé par get_implements, il y a une interface spécific a implémenté.
+
+Chaque methode convert renvoi un array ayant deux clef :
+'data' : donnée liée a fsb même
+'sql' : requête éventuelle a effectuer sur fsb suite à la migration, se doit d'être éviter au maximum
+
+Ajout d'une étape supplémentaire dans le convertisseur
+------------------------------------------------------
+Pour ajouter une étape suppélementaire dans le convertisseur, plusieurs chsoes sont nécéssaires :
+- Ajouters la méthodes suivantes :
+protected function page_toto()
+{
+	// stuff to do
+}
+- Modifier la listes des "pages" :
+$this->implement[] = 'toto';
+
+# EOF

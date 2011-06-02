@@ -13,6 +13,21 @@ if (!defined('ROOT'))
 	die('This file must be included.<hr />Ce fichier doit etre inclus');
 }
 
+include_once('includes/class/convert_tree_forums.php');
+include_once('includes/interface/converter.php');
+include_once('includes/interface/users.php');
+include_once('includes/interface/config.php');
+include_once('includes/interface/groups.php');
+include_once('includes/interface/forums.php');
+include_once('includes/interface/auths.php');
+include_once('includes/interface/topics.php');
+include_once('includes/interface/posts.php');
+include_once('includes/interface/mp.php');
+include_once('includes/interface/polls.php');
+include_once('includes/interface/bans.php');
+include_once('includes/interface/ranks.php');
+include_once('includes/interface/copy.php');
+
 /**
  * Classe de gestion des convertisseurs
  */
@@ -69,6 +84,8 @@ class Convert
 	const STATE_MIDDLE = 4;
 	const STATE_END = 8;
 
+	const EXPORT_FILENAME = 'export.sql';
+
 	/**
 	 * Rafraichissement offset ?
 	 *
@@ -105,11 +122,7 @@ class Convert
 		// Gestion de la connexion a la base de donnee ?
 		$this->database_connexion();
 
-		// Si la methode forum_information() existe on l'appel maintenant
-		if (method_exists($this, 'forum_information'))
-		{
-			$this->forum_information();
-		}
+		$this->forum_information();
 
 		// Liste des conversions implementees
 		$this->get_implement();
@@ -171,7 +184,6 @@ class Convert
 
 	/**
 	 * Liste des conversions que le script implemente
-	 *
 	 */
 	private function get_implement()
 	{
@@ -327,7 +339,7 @@ class Convert
 		switch ($this->config('output'))
 		{
 			case self::OUTPUT_FILE :
-				$fd = fopen('export.sql', 'a');
+				$fd = fopen(self::EXPORT_FILENAME, 'a');
 				foreach ($ary AS $line)
 				{
 					fwrite($fd, $line . ";\n");
@@ -372,7 +384,7 @@ class Convert
 			'SQL_LOGIN' =>			$this->config('sql_login'),
 			'SQL_PASSWORD' =>		$this->config('sql_password'),
 			'SQL_DBNAME' =>			$this->config('sql_dbname'),
-			'SQL_PORT' =>			$this->config('sql_port'),
+			'SQL_PORT' =>			$this->config('sql_port')
 		));
 
 		// Configuration additionelle
@@ -383,6 +395,11 @@ class Convert
 				'EXPLAIN' =>	Fsb::$session->lang('convert_conf_' . $key . '_explain'),
 				'HTML' =>		str_replace('{VALUE}', $this->config($key), $value),
 			));
+		}
+
+		if (!is_writable(self::EXPORT_FILENAME))
+		{
+			chmod(self::EXPORT_FILENAME, 'ugo+w');
 		}
 	}
 
@@ -902,92 +919,6 @@ class Convert
 				}
 			}
 		}
-	}
-}
-
-/**
- * Classe permettant la creation et la manipulation des forums sous forme d'arbre, afin de faciliter leur import dans FSB2
- *
- */
-class Convert_tree_forums extends Tree
-{
-	/**
-	 * Constructeur
-	 *
-	 */
-	public function __construct()
-	{
-		$this->add_item(0, null, array());
-	}
-
-	/**
-	 * Surcharge de la methode Tree::add_item() pour ajouter le niveau du sous forum
-	 *
-	 * @param int $id
-	 * @param int $parent
-	 * @param array $data
-	 */
-	public function add_item($id, $parent, $data)
-	{
-		parent::add_item($id, $parent, $data);
-
-		$this->merge_item($id, array(
-			'f_level' =>	count($this->getByID($id)->getParents()) - 2
-		));
-	}
-
-	/**
-	 * Ajoute les champs f_left et f_right aux forums
-	 *
-	 * @param unknown_type $node
-	 * @param int $f_left
-	 */
-	public function create_interval($node = null, &$f_left = 0)
-	{
-		if (!$node)
-		{
-			$node = $this->document;
-		}
-		
-		foreach ($node->children AS $child)
-		{
-			$f_left++;
-			$child->set('f_left', $f_left);
-			$child->set('f_right', $f_left + (2 * count($child->allChildren()) + 1));
-
-			if ($child->children)
-			{
-				$this->create_interval($child, $f_left);
-			}
-
-			$f_left++;
-		}
-	}
-
-	/**
-	 * Retourne un tableau simple contenant les forums, au lieu d'un arbre
-	 *
-	 * @param unknown_type $node
-	 * @return unknown
-	 */
-	public function plain_data($node = null)
-	{
-		if (!$node)
-		{
-			$node = $this->document->children[0];
-		}
-
-		$return = array();
-		foreach ($node->children AS $child)
-		{
-			$return[$child->get('f_id')] = $child->data;
-			if ($child->children)
-			{
-				$return = array_merge($return, $this->plain_data($child));
-			}
-		}
-
-		return ($return);
 	}
 }
 
