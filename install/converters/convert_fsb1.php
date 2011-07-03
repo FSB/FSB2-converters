@@ -20,7 +20,7 @@
  *	- Login / pseudo
  *	- Rangs
  */
-class Convert_fsb1 extends Convert implements Fsb2_Converter, FSB2_Config, FSB2_Users, FSB2_Groups, FSB2_Forums, FSB2_Auths, FSB2_Topics, FSB2_Posts, FSB2_Mp, FSB2_Polls, FSB2_Bans, FSB2_Ranks, FSB2_Copy
+class Convert_fsb1 extends Convert implements FSB2_Converter, FSB2_Config, FSB2_Users, FSB2_Groups, FSB2_Forums, FSB2_Auths, FSB2_Topics, FSB2_Posts, FSB2_Mp, FSB2_Polls, FSB2_Bans, FSB2_Ranks, FSB2_Copy
 {
 	// Nom du forum
 	public static $static_forum_type = 'FSB (Fire Soft Board) 1.0.X';
