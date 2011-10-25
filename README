@@ -1,5 +1,5 @@
-Converter for X -> FSB 2.X.X
-===================================
-Convert stuff to FSB 2.X.X
+Converters from X to FSB 2.X.X
+==============================
 
-The converters only act on install.
+These scripts are converters from other forum software to FSB2.
+The converters can only be used during the installation.
