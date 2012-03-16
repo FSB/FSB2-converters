@@ -40,7 +40,7 @@ class Convert_fsb1 extends Convert implements FSB2_Converter, FSB2_Config, FSB2_
 
 	public function forum_information()
 	{
-		// Recherche des MOS FSB1 installes
+		// Recherche des MODS FSB1 installes
 		$sql = 'SHOW TABLES LIKE \'' . $this->config('sql_prefix') . '%\'';
 		$result = Fsb::$db->query($sql);
 		while ($row = Fsb::$db->row($result, 'row'))
@@ -248,7 +248,7 @@ class Convert_fsb1 extends Convert implements FSB2_Converter, FSB2_Config, FSB2_
 		}
 		Fsb::$db->free($result);
 
-		// Generations des membres des groupes
+		// Generation des membres des groupes
 		$sql = 'SELECT *
 				FROM ' . $this->config('sql_prefix') . 'groupes_membres
 				ORDER BY g_id';
@@ -455,7 +455,7 @@ class Convert_fsb1 extends Convert implements FSB2_Converter, FSB2_Config, FSB2_
 
 			// Membres passant moderateurs
 
-			// On recupere les membres passants au stade de moderateurs
+			// On recupere les membres passant au stade de moderateurs
 			$sql = 'SELECT u.u_id
 					FROM ' . $this->config('sql_prefix') . 'groupes_droits gd
 					LEFT JOIN ' . $this->config('sql_prefix') . 'groupes_membres u
@@ -854,7 +854,7 @@ class Convert_fsb1 extends Convert implements FSB2_Converter, FSB2_Config, FSB2_
 	}
 
 	/**
-	 * Converti une autorisation FSB1 en autorisation FSB2
+	 * Convertit une autorisation FSB1 en autorisation FSB2
 	 */
 	private function fsb1_get_auth($f, $level, $auth)
 	{
