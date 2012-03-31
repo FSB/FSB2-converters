@@ -8,8 +8,3 @@ Supported forum software
 ------------------------
 
 *	FSB 1
-
-Under development
------------------
-
-*	FluxBB 1.4.X
